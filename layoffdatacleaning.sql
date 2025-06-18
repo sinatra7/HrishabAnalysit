@@ -3,37 +3,16 @@
 -- https://www.kaggle.com/datasets/swaptr/layoffs-2022
 
 
-
-
-
-
 SELECT * 
 FROM world_layoffs.layoffs;
 
-
-
--- first thing we want to do is create a staging table. This is the one we will work in and clean the data. We want a table with the raw data in case something happens
 CREATE TABLE world_layoffs.layoffs_staging 
 LIKE world_layoffs.layoffs;
 
 INSERT layoffs_staging 
 SELECT * FROM world_layoffs.layoffs;
 
-
--- now when we are data cleaning we usually follow a few steps
--- 1. check for duplicates and remove any
--- 2. standardize data and fix errors
--- 3. Look at null values and see what 
--- 4. remove any columns and rows that are not necessary - few ways
-
-
-
 -- 1. Remove Duplicates
-
-# First let's check for duplicates
-
-
-
 SELECT *
 FROM world_layoffs.layoffs_staging
 ;
@@ -58,12 +37,11 @@ FROM (
 WHERE 
 	row_num > 1;
     
--- let's just look at oda to confirm
 SELECT *
 FROM world_layoffs.layoffs_staging
 WHERE company = 'Oda'
 ;
--- it looks like these are all legitimate entries and shouldn't be deleted. We need to really look at every single row to be accurate
+--  all legitimate entries and shouldn't be deleted. look at every single row to be accurate
 
 -- these are our real duplicates 
 SELECT *
@@ -78,9 +56,8 @@ FROM (
 WHERE 
 	row_num > 1;
 
--- these are the ones we want to delete where the row number is > 1 or 2or greater essentially
+-- delete where the row number is > 1 or 2or greater
 
--- now you may want to write it like this:
 WITH DELETE_CTE AS 
 (
 SELECT *
@@ -111,8 +88,7 @@ WHERE (company, location, industry, total_laid_off, percentage_laid_off, `date`,
 	FROM DELETE_CTE
 ) AND row_num > 1;
 
--- one solution, which I think is a good one. Is to create a new column and add those row numbers in. Then delete where row numbers are over 2, then delete that column
--- so let's do it!!
+-- creating a new column and add those row numbers in. Then delete where row numbers are over 2, then delete that column
 
 ALTER TABLE world_layoffs.layoffs_staging ADD row_num INT;
 
@@ -287,12 +263,8 @@ FROM world_layoffs.layoffs_staging2;
 
 
 -- 3. Look at Null Values
-
--- the null values in total_laid_off, percentage_laid_off, and funds_raised_millions all look normal. I don't think I want to change that
 -- I like having them null because it makes it easier for calculations during the EDA phase
-
 -- so there isn't anything I want to change with the null values
-
 
 
 
@@ -322,37 +294,3 @@ DROP COLUMN row_num;
 
 SELECT * 
 FROM world_layoffs.layoffs_staging2;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
