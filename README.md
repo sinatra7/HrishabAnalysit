@@ -1,1 +1,1 @@
-# HrishabAnalysit
+# HrishabAnalyst
